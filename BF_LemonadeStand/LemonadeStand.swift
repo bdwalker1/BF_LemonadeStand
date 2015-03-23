@@ -37,7 +37,7 @@ struct LemonadeStand_Lemonade {
     var lemonsPerBatch: Int = 0
     var icePerBatch: Int = 0
     var glassesAvailable: Int = 0
-    var pricePerGlass: Int = 3
+    var pricePerGlass: Int = 2
     
     func strength() -> Float {
         // For each lemon less than the maximum we need a unit of water to fill the pitcher
@@ -91,12 +91,13 @@ struct LemonadeStand_Lemonade {
 class LemonadeStand {
 
     // Class constants
-    let kAverageCustomersPerDay = 20
+    let kAverageCustomersPerDay = 30
 
     // Class properties
     var inventory = LemonadeStand_Inventory(aFunds: 10, aLemons: 1, aIce: 2)
     var cart = LemonadeStand_ShoppingCart()
     var lemonade = LemonadeStand_Lemonade()
+    var popularity: Int = 10
 
     // Class functions
     init() {
@@ -110,6 +111,8 @@ class LemonadeStand {
 
         // Initialize report variable
         var strReport = ""
+        var nRandomCustomerCount: Int = 0
+        var nRepeatCustomerCount: Int = 0
         var nCustomerCount: Int = 0
         var nWeatherAdjust: Int = 0
         var nCustomersServed: Int = 0
@@ -118,33 +121,49 @@ class LemonadeStand {
         var nBatchesMade: Int = 0
         var nLemonsUsed: Int = 0
         var nIceUsed: Int = 0
+        var nCostOfSupplies: Int = 0
         
         // Complete store purchase by resetting store values
         self.cart = LemonadeStand_ShoppingCart()
         
         // Generate customers
-        nCustomerCount = Int( arc4random_uniform(UInt32(kAverageCustomersPerDay)) ) + 1
+        nRandomCustomerCount = Int( arc4random_uniform(UInt32(kAverageCustomersPerDay)) ) + 1
         nWeatherAdjust = Int( arc4random_uniform(UInt32(kAverageCustomersPerDay/3)) ) + 1
         
         switch (weatherDescription)
         {
         case ("Warm"):
-            nCustomerCount += nWeatherAdjust
+            nRandomCustomerCount += nWeatherAdjust
         case ("Cold"):
-            nCustomerCount -= nWeatherAdjust
+            nRandomCustomerCount -= nWeatherAdjust
         default:
-            nCustomerCount = nCustomerCount * 1
+            nRandomCustomerCount = nRandomCustomerCount * 1
         }
+        
+        // Repeat customer count is based on popularity.
+        nRepeatCustomerCount = Int( Float(kAverageCustomersPerDay) * Float(popularity) / 100.0)
+        
+        // Combine random customers with return customers
+        nCustomerCount = nRandomCustomerCount
+        nCustomerCount += nRepeatCustomerCount
+        
         // Adjust customer count to zero if negative
         if (nCustomerCount < 0)
         {
             nCustomerCount = 0
+            nRepeatCustomerCount = 0
         }
         
         if (!haveInventoryForOneBatch())
         {
+            // Customers are not happy when their favorite lemonade stand is closed
+            popularity -= 3
+            if (popularity<0) { popularity = 0 }
+            
             strReport += "You did not have enough inventory to even make one batch of lemonade.  Your lemonade stand was closed for the day.\r\n\r\n"
             strReport += "You lost out on \(nCustomerCount) potential customers."
+            strReport += "\r\n"
+            strReport += "Due to unhappy customers your new popularity rating is \(popularity)%."
         }
         else
         {
@@ -201,22 +220,63 @@ class LemonadeStand {
             // Determine our daily results
             nLemonsUsed = nBatchesMade * self.lemonade.lemonsPerBatch
             nIceUsed = nBatchesMade * self.lemonade.icePerBatch
+            nCostOfSupplies = nLemonsUsed * cart.costOfLemon + nIceUsed * cart.costOfIce
             nFundsEarned = nCustomersPaid * self.lemonade.pricePerGlass
             self.inventory.funds += nFundsEarned
             
-            strReport += "You had \(nCustomerCount) customers today.\r\n"
-            strReport += "You sold \(nCustomersPaid) glasses of lemonade.\r\n"
-            strReport += "\(nCustomersServed - nCustomersPaid) customers did not like your mix.\r\n"
-            strReport += "\(nCustomerCount - nCustomersServed) customers were turned away because you ran out of inventory.\r\n"
-            strReport += "\r\n"
-            var strPitchers = "\(nBatchesMade) pitcher"
-            if (nBatchesMade != 1)
+            // Adjust popularity based on performance
+            if (nCustomersPaid > 10)
             {
-                strPitchers += "s"
+                popularity += 2
             }
-            strReport += "You made \(strPitchers) of lemonade using \(nLemonsUsed) lemons and \(nIceUsed) ice cubes."
-            strReport += "\r\n"
-            strReport += "For selling \(nCustomersPaid) glasses of lemonade you earned $\(nFundsEarned)."
+            else if (nCustomersPaid >= 5)
+            {
+                popularity += 1
+            }
+            else if (nCustomersPaid == 0)
+            {
+                popularity -= 1
+            }
+            if (popularity < 0) { popularity = 0 }
+            if (popularity > 100) { popularity = 100 }
+            
+            strReport += "You had \(nCustomerCount) customers today"
+            if (nRepeatCustomerCount > 0)
+            {
+                strReport += " of which \(nRepeatCustomerCount) were repeat customers"
+            }
+            strReport += ", and you sold \(nCustomersPaid) glasses of lemonade. "
+            if (nCustomersServed - nCustomersPaid > 0)
+            {
+                strReport += "\(nCustomersServed - nCustomersPaid) customers did not like your mix. "
+            }
+            if (nCustomerCount - nCustomersServed > 0)
+            {
+                strReport += "\(nCustomerCount - nCustomersServed) customers were turned away because you ran out of supplies."
+            }
+            strReport += "\r\n\r\n"
+            if (nBatchesMade > 0)
+            {
+                var strPitchers = "\(nBatchesMade) pitcher"
+                if (nBatchesMade != 1)
+                {
+                    strPitchers += "s"
+                }
+                strReport += "You made \(strPitchers) of lemonade using \(nLemonsUsed) lemons and \(nIceUsed) ice cubes "
+                strReport += "at a cost of $\(nCostOfSupplies). "
+            }
+            if (nCustomersPaid > 0)
+            {
+                var strProfitOrLoss = "profit"
+                var nNet = nFundsEarned - nCostOfSupplies
+                if (nNet < 0) { strProfitOrLoss = "loss" }
+                strReport += "For selling \(nCustomersPaid) glasses of lemonade you earned $\(nFundsEarned) giving you a net \(strProfitOrLoss) for the day of $\(abs(nNet)).\r\n"
+                strReport += "\r\n"
+            }
+            if (!self.outOfBusiness())
+            {
+                strReport += "Your new popularity rating is \(popularity)%."
+            }
         }
         
         if (self.outOfBusiness())
