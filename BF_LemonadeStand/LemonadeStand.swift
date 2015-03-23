@@ -111,10 +111,9 @@ class LemonadeStand {
 
         // Initialize report variable
         var strReport = ""
-        var nRandomCustomerCount: Int = 0
-        var nRepeatCustomerCount: Int = 0
+        var nMaxCustomerToGenerate: Int = 0
         var nCustomerCount: Int = 0
-        var nWeatherAdjust: Int = 0
+        var nRepeatCustomerCount: Int = 0
         var nCustomersServed: Int = 0
         var nCustomersPaid: Int = 0
         var nFundsEarned: Int = 0
@@ -126,25 +125,24 @@ class LemonadeStand {
         // Complete store purchase by resetting store values
         self.cart = LemonadeStand_ShoppingCart()
         
-        // Generate customers
-        nRandomCustomerCount = Int( arc4random_uniform(UInt32(kAverageCustomersPerDay)) ) + 1
-        nWeatherAdjust = Int( arc4random_uniform(UInt32(kAverageCustomersPerDay/3)) ) + 1
-        
+        // Set the maximum number of customers to generate based on the weather
         switch (weatherDescription)
         {
         case ("Warm"):
-            nRandomCustomerCount += nWeatherAdjust
+            nMaxCustomerToGenerate = Int( Float(kAverageCustomersPerDay) + Float(kAverageCustomersPerDay) * (Float( arc4random_uniform(UInt32(51))) / 100.0) )
         case ("Cold"):
-            nRandomCustomerCount -= nWeatherAdjust
+            nMaxCustomerToGenerate = Int( Float(kAverageCustomersPerDay) - Float(kAverageCustomersPerDay) * (Float( arc4random_uniform(UInt32(76))) / 100.0) )
         default:
-            nRandomCustomerCount = nRandomCustomerCount * 1
+            nMaxCustomerToGenerate = kAverageCustomersPerDay
         }
+        
+        // Generate customers
+        nCustomerCount = Int( arc4random_uniform(UInt32(nMaxCustomerToGenerate)) ) + 1
         
         // Repeat customer count is based on popularity.
         nRepeatCustomerCount = Int( Float(kAverageCustomersPerDay) * Float(popularity) / 100.0)
         
         // Combine random customers with return customers
-        nCustomerCount = nRandomCustomerCount
         nCustomerCount += nRepeatCustomerCount
         
         // Adjust customer count to zero if negative
