@@ -46,8 +46,8 @@ class CustomerFactory {
         var customers:[Customer] = []
         for (var n=1; n <= nCount; n++)
         {
-            let kStrengthPreference = (Float(arc4random_uniform(UInt32(100))+1) / 100.0)
-            let kTempPreference = (Float(arc4random_uniform(UInt32(100))+1) / 100.0)
+            let kStrengthPreference = (Float(arc4random_uniform(UInt32(101))) / 100.0)
+            let kTempPreference = (Float(arc4random_uniform(UInt32(101))) / 100.0)
             var customer = Customer(number: n, strengthPreference: kStrengthPreference, tempPreference: kTempPreference)
             customers.append(customer)
         }

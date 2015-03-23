@@ -111,6 +111,7 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         // Setup initial weather
         weatherToday.generateRandomWeather()
         self.updateWeatherView()
+        
     }
     
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
