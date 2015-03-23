@@ -267,6 +267,13 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         viewTarget.layer.transform = CATransform3DMakeScale( scaleX, scaleY, 1 )
     }
     
+    func radiusButtonCorners(btn: UIButton, clrBorderColor: UIColor = UIColor.clearColor()) -> UIButton {
+        btn.layer.cornerRadius = (btn.bounds.size.height * 0.25)
+        btn.layer.borderWidth = 1.5
+        btn.layer.borderColor = clrBorderColor.CGColor
+        return btn
+    }
+    
     func closeDailyReport(button: UIButton) {
         
         // Close the daily report view
@@ -504,6 +511,7 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         self.btnStoreAddLemon.bounds.size.height = self.btnStoreAddLemon.frame.width
         self.btnStoreAddLemon.center = CGPoint(x: self.lblStoreLemons.frame.maxX + (self.btnStoreAddLemon.frame.width * 0.75), y: self.imgVwStoreLemons.frame.midY)
         self.btnStoreAddLemon.addTarget(self, action: "pressAddLemon:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.btnStoreAddLemon = radiusButtonCorners( self.btnStoreAddLemon )
         viewContainer.addSubview(self.btnStoreAddLemon)
         
         // Setup subtract lemon button
@@ -517,6 +525,7 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         self.btnStoreSubtractLemon.bounds.size.width = self.btnStoreAddLemon.frame.width
         self.btnStoreSubtractLemon.center = CGPoint(x: self.lblStoreLemons.frame.minX - (self.btnStoreSubtractLemon.frame.width * 0.75), y: self.imgVwStoreLemons.frame.midY)
         self.btnStoreSubtractLemon.addTarget(self, action: "pressSubtractLemon:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.btnStoreSubtractLemon = radiusButtonCorners( self.btnStoreSubtractLemon )
         viewContainer.addSubview(self.btnStoreSubtractLemon)
         
         // Setup ice label
@@ -539,6 +548,7 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         self.btnStoreAddIce.bounds.size.height = self.btnStoreAddIce.frame.width
         self.btnStoreAddIce.center = CGPoint(x: self.lblStoreIce.frame.maxX + (self.btnStoreAddIce.frame.width * 0.75), y: self.imgVwStoreIce.frame.midY)
         self.btnStoreAddIce.addTarget(self, action: "pressAddIce:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.btnStoreAddIce = radiusButtonCorners( self.btnStoreAddIce )
         viewContainer.addSubview(self.btnStoreAddIce)
         
         // Setup subtract ice button
@@ -552,7 +562,8 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         self.btnStoreSubtractIce.bounds.size.width = self.btnStoreAddIce.frame.width
         self.btnStoreSubtractIce.center = CGPoint(x: self.lblStoreIce.frame.minX - (self.btnStoreSubtractIce.frame.width * 0.75), y: self.imgVwStoreIce.frame.midY)
         self.btnStoreSubtractIce.addTarget(self, action: "pressSubtractIce:", forControlEvents: UIControlEvents.TouchUpInside)
-        viewContainer.addSubview(self.btnStoreSubtractIce)
+        self.btnStoreSubtractIce = radiusButtonCorners( self.btnStoreSubtractIce )
+       viewContainer.addSubview(self.btnStoreSubtractIce)
         
         // Setup cost label
         self.lblStoreCost = UILabel()
@@ -697,6 +708,7 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         self.btnMixAddLemon.bounds.size.height = self.btnMixAddLemon.frame.width
         self.btnMixAddLemon.center = CGPoint(x: self.lblMixLemons.frame.maxX + (self.btnMixAddLemon.frame.width * 0.75), y: self.lblMixLemons.center.y)
         self.btnMixAddLemon.addTarget(self, action: "pressMixAddLemon:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.btnMixAddLemon = radiusButtonCorners( self.btnMixAddLemon )
         viewContainer.addSubview(self.btnMixAddLemon)
         
         // Setup subtract lemon button
@@ -709,6 +721,7 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         self.btnMixSubtractLemon.bounds.size.height = self.btnMixAddLemon.frame.width
         self.btnMixSubtractLemon.center = CGPoint(x: self.lblMixLemons.frame.minX - (self.btnMixSubtractLemon.frame.width * 0.75), y: self.lblMixLemons.center.y)
         self.btnMixSubtractLemon.addTarget(self, action: "pressMixSubtractLemon:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.btnMixSubtractLemon = radiusButtonCorners( self.btnMixSubtractLemon )
         viewContainer.addSubview(self.btnMixSubtractLemon)
         
         // Setup ice label
@@ -741,6 +754,7 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         self.btnMixAddIce.bounds.size.height = self.btnMixAddIce.frame.width
         self.btnMixAddIce.center = CGPoint(x: self.lblMixIce.frame.maxX + (self.btnMixAddIce.frame.width * 0.75), y: self.lblMixIce.center.y)
         self.btnMixAddIce.addTarget(self, action: "pressMixAddIce:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.btnMixAddIce = radiusButtonCorners( self.btnMixAddIce )
         viewContainer.addSubview(self.btnMixAddIce)
         
         // Setup subtract ice button
@@ -753,6 +767,7 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         self.btnMixSubtractIce.bounds.size.height = self.btnMixSubtractIce.frame.width
         self.btnMixSubtractIce.center = CGPoint(x: self.lblMixIce.frame.minX - (self.btnMixSubtractIce.frame.width * 0.75), y: self.lblMixIce.center.y)
         self.btnMixSubtractIce.addTarget(self, action: "pressMixSubtractIce:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.btnMixSubtractIce = radiusButtonCorners( self.btnMixSubtractIce )
         viewContainer.addSubview(self.btnMixSubtractIce)
     }
     
@@ -770,6 +785,7 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         self.btnDoBusiness.bounds.size.width = self.btnDoBusiness.frame.width * 1.1
         self.btnDoBusiness.center = CGPoint(x: viewContainer.frame.width * kHalf, y: viewContainer.frame.height * kFourth)
         self.btnDoBusiness.addTarget(self, action: "pressDoBusiness:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.btnDoBusiness = radiusButtonCorners( self.btnDoBusiness, clrBorderColor: UIColor.blackColor() )
         viewContainer.addSubview(self.btnDoBusiness)
     }
 }
