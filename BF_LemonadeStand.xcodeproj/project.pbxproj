@@ -10,6 +10,7 @@
 		0F12C1881ABEA21D00A8413F /* LemonadeStand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F12C1871ABEA21D00A8413F /* LemonadeStand.swift */; };
 		0F12C18A1ABEB1C300A8413F /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F12C1891ABEB1C300A8413F /* Weather.swift */; };
 		0F12C18C1ABEB22700A8413F /* Customers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F12C18B1ABEB22700A8413F /* Customers.swift */; };
+		0F184CBF1ABFEF2F003F58EC /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F184CBE1ABFEF2F003F58EC /* iAd.framework */; };
 		0F2D3F471ABD007D00032786 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D3F461ABD007D00032786 /* AppDelegate.swift */; };
 		0F2D3F491ABD007D00032786 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D3F481ABD007D00032786 /* ViewController.swift */; };
 		0F2D3F4C1ABD007D00032786 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F2D3F4A1ABD007D00032786 /* Main.storyboard */; };
@@ -32,6 +33,7 @@
 		0F12C1871ABEA21D00A8413F /* LemonadeStand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LemonadeStand.swift; sourceTree = "<group>"; };
 		0F12C1891ABEB1C300A8413F /* Weather.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
 		0F12C18B1ABEB22700A8413F /* Customers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Customers.swift; sourceTree = "<group>"; };
+		0F184CBE1ABFEF2F003F58EC /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		0F2D3F411ABD007D00032786 /* BF_LemonadeStand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BF_LemonadeStand.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F2D3F451ABD007D00032786 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0F2D3F461ABD007D00032786 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -49,6 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F184CBF1ABFEF2F003F58EC /* iAd.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +68,7 @@
 		0F2D3F381ABD007D00032786 = {
 			isa = PBXGroup;
 			children = (
+				0F184CBE1ABFEF2F003F58EC /* iAd.framework */,
 				0F2D3F431ABD007D00032786 /* BF_LemonadeStand */,
 				0F2D3F591ABD007D00032786 /* BF_LemonadeStandTests */,
 				0F2D3F421ABD007D00032786 /* Products */,

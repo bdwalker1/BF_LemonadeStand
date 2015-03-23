@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import iAd
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, ADBannerViewDelegate {
     
     // Constants
     let kEighth: CGFloat = 1.0 / 8.0
@@ -90,6 +91,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        self.canDisplayBannerAds = true
         
         // Build our views
         self.setupContainerViews()
@@ -218,14 +221,21 @@ class ViewController: UIViewController {
         }
         else
         {
-            viewReportHolder = UIView(frame: self.view.frame)
+            viewReportHolder = UIView(frame: self.originalContentView.frame)
             viewReportHolder.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
             viewDailyReport = lemonadeStand.doBusiness(weatherToday.description)
-            viewDailyReport.center = self.view.center
+            viewDailyReport.center = self.originalContentView.center
             viewReportHolder.addSubview(viewDailyReport)
+            self.scaleViewBasedOnSpecifiedOrigWidth(viewDailyReport, viewNewContainer: viewReportHolder, origWidth: 375.0)
+//            var nAspectRatio: CGFloat = viewDailyReport.frame.height / viewDailyReport.frame.width
+//            var scaleX = ( viewReportHolder.frame.width / viewDailyReport.frame.width) * (viewDailyReport.frame.width / 375.0)
+//            var nNewWidth = viewDailyReport.frame.width * scaleX
+//            var nNewHeight = nNewWidth * nAspectRatio
+//            var scaleY = nNewHeight / viewDailyReport.frame.height
+//            viewDailyReport.layer.transform = CATransform3DMakeScale( scaleX, scaleY, 1 )
             viewDailyReport.center = viewReportHolder.center
-            self.view.addSubview(viewReportHolder)
-            self.view.bringSubviewToFront(viewReportHolder)
+            self.originalContentView.addSubview(viewReportHolder)
+            self.originalContentView.bringSubviewToFront(viewReportHolder)
             
             // Add close button to report
             var btnClose = UIButton()
@@ -254,6 +264,15 @@ class ViewController: UIViewController {
     }
     
     // Helper Functions
+
+    func scaleViewBasedOnSpecifiedOrigWidth(viewTarget: UIView, viewNewContainer: UIView, origWidth: CGFloat) {
+        var nAspectRatio: CGFloat = viewTarget.frame.height / viewTarget.frame.width
+        var scaleX = ( viewNewContainer.frame.width / viewTarget.frame.width) * (viewTarget.frame.width / origWidth)
+        var nNewWidth = viewTarget.frame.width * scaleX
+        var nNewHeight = nNewWidth * nAspectRatio
+        var scaleY = nNewHeight / viewTarget.frame.height
+        viewTarget.layer.transform = CATransform3DMakeScale( scaleX, scaleY, 1 )
+    }
     
     func closeDailyReport(button: UIButton) {
         
@@ -302,39 +321,39 @@ class ViewController: UIViewController {
     
     func setupContainerViews() {
         
-        self.view.backgroundColor = UIColor.blackColor()
+        self.originalContentView.backgroundColor = UIColor.blackColor()
         
         // Setup title container
-        self.viewTitle = UIView(frame: CGRect(x: self.view.bounds.origin.x, y: self.view.bounds.origin.y, width: self.view.bounds.width, height: self.view.bounds.height * kSixth))
+        self.viewTitle = UIView(frame: CGRect(x: self.originalContentView.bounds.origin.x, y: self.originalContentView.bounds.origin.y, width: self.originalContentView.bounds.width, height: self.originalContentView.bounds.height * kSixth))
         self.viewTitle.backgroundColor = UIColor.brownColor()
-        self.view.addSubview(self.viewTitle)
+        self.originalContentView.addSubview(self.viewTitle)
         
         // Setup inventory container
-        self.viewInventory = UIView(frame: CGRect(x: self.view.bounds.origin.x, y: self.viewTitle.frame.height, width: self.view.bounds.width * kHalf - (kSectionGutter / 2.0), height: self.view.bounds.height * kFourth))
+        self.viewInventory = UIView(frame: CGRect(x: self.originalContentView.bounds.origin.x, y: self.viewTitle.frame.height, width: self.originalContentView.bounds.width * kHalf - (kSectionGutter / 2.0), height: self.originalContentView.bounds.height * kFourth))
         self.viewInventory.backgroundColor = UIColor.whiteColor()
-        self.view.addSubview(self.viewInventory)
+        self.originalContentView.addSubview(self.viewInventory)
         
         // Setup store container
-        self.viewStore = UIView(frame: CGRect(x: self.viewInventory.bounds.width + kSectionGutter, y: self.viewTitle.frame.height, width: self.view.bounds.width * kHalf - (kSectionGutter / 2.0), height: self.view.bounds.height * kFourth))
+        self.viewStore = UIView(frame: CGRect(x: self.viewInventory.bounds.width + kSectionGutter, y: self.viewTitle.frame.height, width: self.originalContentView.bounds.width * kHalf - (kSectionGutter / 2.0), height: self.originalContentView.bounds.height * kFourth))
         self.viewStore.backgroundColor = UIColor.whiteColor()
-        self.view.addSubview(self.viewStore)
+        self.originalContentView.addSubview(self.viewStore)
         
         // Setup weather forecast container
-        self.viewWeather = UIView(frame: CGRect(x: self.view.bounds.origin.x, y: self.viewInventory.frame.origin.y + self.viewInventory.frame.height, width: self.view.bounds.width, height: self.view.bounds.height * kSixth))
+        self.viewWeather = UIView(frame: CGRect(x: self.originalContentView.bounds.origin.x, y: self.viewInventory.frame.origin.y + self.viewInventory.frame.height, width: self.originalContentView.bounds.width, height: self.originalContentView.bounds.height * kSixth))
         self.viewWeather.backgroundColor = UIColor.whiteColor()
         self.viewWeather.layer.borderColor = UIColor.blackColor().CGColor
         self.viewWeather.layer.borderWidth = 2.0
-        self.view.addSubview(self.viewWeather)
+        self.originalContentView.addSubview(self.viewWeather)
         
         // Setup lemonade mixing container
-        self.viewMix = UIView(frame: CGRect(x: self.view.bounds.origin.x, y: self.viewWeather.frame.origin.y + self.viewWeather.frame.height, width: self.view.bounds.width, height: self.view.bounds.height * kFourth))
+        self.viewMix = UIView(frame: CGRect(x: self.originalContentView.bounds.origin.x, y: self.viewWeather.frame.origin.y + self.viewWeather.frame.height, width: self.originalContentView.bounds.width, height: self.originalContentView.bounds.height * kFourth))
         self.viewMix.backgroundColor = UIColor.whiteColor() // UIColor(red: 1.0, green: 1.0, blue: 0.3, alpha: 1.0)
-        self.view.addSubview(self.viewMix)
+        self.originalContentView.addSubview(self.viewMix)
         
         // Setup the control container
-        self.viewControl = UIView(frame: CGRect(x: self.view.bounds.origin.x, y: self.viewMix.frame.origin.y + self.viewMix.frame.height, width: self.view.bounds.width, height: self.view.bounds.height * kSixth))
+        self.viewControl = UIView(frame: CGRect(x: self.originalContentView.bounds.origin.x, y: self.viewMix.frame.origin.y + self.viewMix.frame.height, width: self.originalContentView.bounds.width, height: self.originalContentView.bounds.height * kSixth))
         self.viewControl.backgroundColor = UIColor.brownColor()
-        self.view.addSubview(self.viewControl)
+        self.originalContentView.addSubview(self.viewControl)
     }
     
     func setupTitleView(viewContainer: UIView) {
@@ -756,7 +775,7 @@ class ViewController: UIViewController {
         self.btnDoBusiness.titleLabel?.font = UIFont(name: "AmericanTypewriter", size: kControlButtonFontSize)
         self.btnDoBusiness.sizeToFit()
         self.btnDoBusiness.bounds.size.width = self.btnDoBusiness.frame.width * 1.1
-        self.btnDoBusiness.center = CGPoint(x: viewContainer.frame.width * kHalf, y: viewContainer.frame.height * kHalf)
+        self.btnDoBusiness.center = CGPoint(x: viewContainer.frame.width * kHalf, y: viewContainer.frame.height * kFourth)
         self.btnDoBusiness.addTarget(self, action: "pressDoBusiness:", forControlEvents: UIControlEvents.TouchUpInside)
         viewContainer.addSubview(self.btnDoBusiness)
     }

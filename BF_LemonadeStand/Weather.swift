@@ -38,4 +38,16 @@ class Weather {
         image = UIImage(named: description)
     }
     
+    func isCold() -> Bool {
+        return (self.description=="Cold")
+    }
+    
+    func isMild() -> Bool {
+        return (self.description=="Mild")
+    }
+    
+    func isWarm() -> Bool {
+        return (self.description=="Warm")
+    }
+    
 }

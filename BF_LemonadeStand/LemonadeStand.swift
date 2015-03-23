@@ -54,6 +54,18 @@ struct LemonadeStand_Lemonade {
             return Float(self.lemonsPerBatch) / Float(self.icePerBatch + kWaterPerBatch)
         }
     }
+    
+    func isAcidic() -> Bool {
+        return (self.strength() > 1.33)
+    }
+    
+    func isEqual() -> Bool {
+        return (self.strength() <= 1.33 && self.strength() >= 0.67)
+    }
+    
+    func isDilluted() -> Bool {
+        return (self.strength() < 0.67)
+    }
 
     func tempFactor() -> Float {
         // Temperature will be the ratio of ice to max ice
@@ -72,18 +84,6 @@ struct LemonadeStand_Lemonade {
     
     func isWarm() -> Bool {
         return (tempFactor() < 0.25)
-    }
-    
-    func isAcidic() -> Bool {
-        return (self.strength() > 1.33)
-    }
-    
-    func isEqual() -> Bool {
-        return (self.strength() <= 1.33 && self.strength() >= 0.67)
-    }
-    
-    func isDilluted() -> Bool {
-        return (self.strength() < 0.67)
     }
 
 }
@@ -244,6 +244,7 @@ class LemonadeStand {
         lblTitle.bounds.size.height = lblTitle.bounds.size.height * 2
         lblTitle.bounds.size.width = 250
         lblTitle.center = CGPoint(x: vwReport.bounds.size.width * 0.5, y: 10.0 + (lblTitle.frame.height * 0.5) )
+        lblTitle.autoresizesSubviews = true
         vwReport.bounds.size.height += lblTitle.bounds.size.height
         vwReport.addSubview(lblTitle)
         var lblReport: UIReportLabel = UIReportLabel(frame: CGRect(origin: CGPoint(x: 0,y: 0), size: CGSize(width: 250, height: 290)))
@@ -255,8 +256,10 @@ class LemonadeStand {
         lblReport.backgroundColor = kPaperColor
         lblReport.center.x = lblTitle.center.x
         lblReport.center.y = lblTitle.frame.maxY + lblReport.bounds.size.height * 0.5
+        lblReport.autoresizesSubviews = true
         vwReport.bounds.size.height += lblReport.bounds.size.height
         vwReport.addSubview(lblReport)
+        vwReport.autoresizesSubviews = true
         
         return vwReport
     }
