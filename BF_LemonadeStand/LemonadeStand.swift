@@ -9,29 +9,95 @@
 import Foundation
 import UIKit
 
+struct LemonadeStand_Inventory {
+    var funds: Int = 0
+    var lemons: Int = 0
+    var ice: Int = 0
+    
+    init( aFunds: Int, aLemons: Int, aIce: Int) {
+        self.funds = aFunds
+        self.lemons = aLemons
+        self.ice = aIce
+    }
+}
+
+struct LemonadeStand_ShoppingCart {
+    let costOfLemon = 2
+    let costOfIce = 1
+    var lemons: Int = 0
+    var ice: Int = 0
+    var cost: Int = 0
+}
+
+struct LemonadeStand_Lemonade {
+    let maxLemonsPerBatch: Int = 5
+    let maxIcePerBatch: Int = 5
+    let glassesPerBatch: Int = 6
+
+    var lemonsPerBatch: Int = 0
+    var icePerBatch: Int = 0
+    var glassesAvailable: Int = 0
+    var pricePerGlass: Int = 3
+    
+    func strength() -> Float {
+        // For each lemon less than the maximum we need a unit of water to fill the pitcher
+        let kWaterPerBatch = self.maxLemonsPerBatch - self.lemonsPerBatch
+        
+        // Without ice or water we will have very strong lemonade
+        if ((self.icePerBatch + kWaterPerBatch) == 0)
+        {
+            return 2.0
+        }
+        // Strength will be the ratio of lemons to other ingredients
+        else
+        {
+            return Float(self.lemonsPerBatch) / Float(self.icePerBatch + kWaterPerBatch)
+        }
+    }
+
+    func tempFactor() -> Float {
+        // Temperature will be the ratio of ice to max ice
+        var fIceRatio: Float = Float(self.icePerBatch)/Float(self.maxIcePerBatch)
+        
+        return fIceRatio
+    }
+    
+    func isCold() -> Bool {
+        return (tempFactor() > 0.75)
+    }
+    
+    func isCool() -> Bool {
+        return (tempFactor() <= 0.75 && tempFactor() >= 0.25)
+    }
+    
+    func isWarm() -> Bool {
+        return (tempFactor() < 0.25)
+    }
+    
+    func isAcidic() -> Bool {
+        return (self.strength() > 1.33)
+    }
+    
+    func isEqual() -> Bool {
+        return (self.strength() <= 1.33 && self.strength() >= 0.67)
+    }
+    
+    func isDilluted() -> Bool {
+        return (self.strength() < 0.67)
+    }
+
+}
+
 class LemonadeStand {
 
     // Class constants
-    let kCostOfLemon = 2
-    let kCostOfIce = 1
-    let kMaxLemonsPerBatch = 3
-    let kMaxIcePerBatch = 5
-    let kGlassesPerBatch = 6
-    let kLemonadeSalesPrice = 1
     let kAverageCustomersPerDay = 20
 
     // Class properties
-    var nFunds:Int = 10
-    var nLemons = 1
-    var nIce = 2
-    var nLemonsToBuy = 0
-    var nIceToBuy = 0
-    var nStoreCost = 0
-    var nLemonsPerBatch = 0
-    var nIcePerBatch = 0
-    var nLemonadeStrength = 1.0
-    var nGlassesAvailable = 0
-    
+    var inventory = LemonadeStand_Inventory(aFunds: 10, aLemons: 1, aIce: 2)
+    var cart = LemonadeStand_ShoppingCart()
+    var lemonade = LemonadeStand_Lemonade()
+
     // Class functions
     init() {
         
@@ -54,9 +120,7 @@ class LemonadeStand {
         var nIceUsed: Int = 0
         
         // Complete store purchase by resetting store values
-        self.nLemonsToBuy = 0
-        self.nIceToBuy = 0
-        self.nStoreCost = 0
+        self.cart = LemonadeStand_ShoppingCart()
         
         // Generate customers
         nCustomerCount = Int( arc4random_uniform(UInt32(kAverageCustomersPerDay)) ) + 1
@@ -86,11 +150,11 @@ class LemonadeStand {
         {
             strReport += "Weather for the day was \(weatherDescription). "
             strReport += "Your lemonade mix for the day was "
-            if (lemondateIsAcidic())
+            if (self.lemonade.isAcidic())
             {
                 strReport += "strong."
             }
-            else if (lemondateIsEqual())
+            else if (self.lemonade.isEqual())
             {
                 strReport += "balanced."
             }
@@ -100,55 +164,57 @@ class LemonadeStand {
             }
             strReport += "\r\n\r\n"
 
-            // Prepare our first pitcher of lemonade
-            nGlassesAvailable = 0 // We squeeze fresh, so wash out the pitcher from yesterday.
-            if (makeLemonade())
-            {
-                nBatchesMade++
-            }
+            // We squeeze fresh, so wash out the pitcher from yesterday.
+            lemonade.glassesAvailable = 0
             
             // Process our customers
             var customers: [Customer] = CustomerFactory.createCustomers(nCustomerCount)
             for cust in customers
             {
-                if (nGlassesAvailable==0)
+                nCustomersServed++
+                
+                if ( ( (cust.prefersAcidic() && self.lemonade.isAcidic()) || (cust.prefersEqual() && self.lemonade.isEqual()) || (cust.prefersDilluted() && self.lemonade.isDilluted()) ) && ( (cust.prefersCold() && self.lemonade.isCold()) || (cust.prefersCool() && self.lemonade.isCool()) || (cust.prefersWarm() && self.lemonade.isWarm()) ) )
                 {
-                    // We ran out of lemonade, make more if we can
-                    if (makeLemonade())
+                    if (lemonade.glassesAvailable==0)
                     {
-                        nBatchesMade++
+                        // We ran out of lemonade, make more if we can
+                        if (makeLemonade())
+                        {
+                            nBatchesMade++
+                        }
                     }
-                }
-
-                // If we have lemonade, serve the customer
-                if (nGlassesAvailable > 0)
-                {
-                    nCustomersServed++
                     
-                    if ( (cust.prefersAcidic() && lemondateIsAcidic()) || (cust.prefersEqual() && lemondateIsEqual()) || (cust.prefersDilluted() && lemondateIsDilluted()) )
+                    // If we have lemonade, serve the customer
+                    if (lemonade.glassesAvailable > 0)
                     {
+                        // Update our paid count and available glasses
                         nCustomersPaid++
-                        nGlassesAvailable--
+                        self.lemonade.glassesAvailable--
                     }
-                }
-                else
-                {
-                    break
+                    else
+                    {
+                        break
+                    }
                 }
             }
 
             // Determine our daily results
-            nLemonsUsed = nBatchesMade * nLemonsPerBatch
-            nIceUsed = nBatchesMade * nIcePerBatch
-            nFundsEarned = nCustomersPaid * kLemonadeSalesPrice
-            self.nFunds += nFundsEarned
+            nLemonsUsed = nBatchesMade * self.lemonade.lemonsPerBatch
+            nIceUsed = nBatchesMade * self.lemonade.icePerBatch
+            nFundsEarned = nCustomersPaid * self.lemonade.pricePerGlass
+            self.inventory.funds += nFundsEarned
             
             strReport += "You had \(nCustomerCount) customers today.\r\n"
             strReport += "You sold \(nCustomersPaid) glasses of lemonade.\r\n"
             strReport += "\(nCustomersServed - nCustomersPaid) customers did not like your mix.\r\n"
             strReport += "\(nCustomerCount - nCustomersServed) customers were turned away because you ran out of inventory.\r\n"
             strReport += "\r\n"
-            strReport += "You made \(nBatchesMade) pitchers of lemonade using \(nLemonsUsed) lemons and \(nIceUsed) ice cubes."
+            var strPitchers = "\(nBatchesMade) pitcher"
+            if (nBatchesMade != 1)
+            {
+                strPitchers += "s"
+            }
+            strReport += "You made \(strPitchers) of lemonade using \(nLemonsUsed) lemons and \(nIceUsed) ice cubes."
             strReport += "\r\n"
             strReport += "For selling \(nCustomersPaid) glasses of lemonade you earned $\(nFundsEarned)."
         }
@@ -198,7 +264,7 @@ class LemonadeStand {
     func outOfBusiness() -> Bool {
 
         // If we are out of lemons and don't have enough funds to buy more it's game over
-        if ( nLemons == 0 && nFunds < kCostOfLemon )
+        if ( inventory.lemons == 0 && inventory.funds < self.cart.costOfLemon )
         {
             return true
         }
@@ -209,12 +275,12 @@ class LemonadeStand {
     }
     
     func addLemonToCart() -> Bool {
-        if ( self.nFunds >= kCostOfLemon )
+        if ( self.inventory.funds >= self.cart.costOfLemon )
         {
-            self.nLemonsToBuy++
-            self.nStoreCost += kCostOfLemon
-            self.nLemons++
-            self.nFunds -= kCostOfLemon
+            self.cart.lemons++
+            self.cart.cost += self.cart.costOfLemon
+            self.inventory.lemons++
+            self.inventory.funds -= self.cart.costOfLemon
             return true
         }
         else
@@ -224,22 +290,22 @@ class LemonadeStand {
     }
     
     func removeLemonFromCart() {
-        if (self.nLemonsToBuy > 0)
+        if (self.cart.lemons > 0)
         {
-            self.nLemonsToBuy--
-            self.nStoreCost -= kCostOfLemon
-            self.nLemons--
-            self.nFunds += kCostOfLemon
+            self.cart.lemons--
+            self.cart.cost -= self.cart.costOfLemon
+            self.inventory.lemons--
+            self.inventory.funds += self.cart.costOfLemon
         }
     }
 
     func addIceToCart() -> Bool {
-        if ( self.nFunds >= kCostOfIce )
+        if ( self.inventory.funds >= self.cart.costOfIce )
         {
-            self.nIceToBuy++
-            self.nStoreCost += kCostOfIce
-            self.nIce++
-            self.nFunds -= kCostOfIce
+            self.cart.ice++
+            self.cart.cost += self.cart.costOfIce
+            self.inventory.ice++
+            self.inventory.funds -= self.cart.costOfIce
             return true
         }
         else
@@ -249,24 +315,23 @@ class LemonadeStand {
     }
 
     func removeIceFromCart() {
-        if (self.nIceToBuy > 0)
+        if (self.cart.ice > 0)
         {
-            self.nIceToBuy--
-            self.nStoreCost -= kCostOfIce
-            self.nIce--
-            self.nFunds += kCostOfIce
+            self.cart.ice--
+            self.cart.cost -= self.cart.costOfIce
+            self.inventory.ice--
+            self.inventory.funds += self.cart.costOfIce
         }
     }
     
     func maxLemonsReached() -> Bool {
-        return (self.nLemonsPerBatch >= self.kMaxLemonsPerBatch)
+        return (self.lemonade.lemonsPerBatch >= self.lemonade.maxLemonsPerBatch)
     }
     
     func addLemonToMix() -> Bool {
         if (!self.maxLemonsReached())
         {
-            self.nLemonsPerBatch++
-            self.updateMixStrength()
+            self.lemonade.lemonsPerBatch++
             return true
         }
         else
@@ -276,22 +341,20 @@ class LemonadeStand {
     }
     
     func removeLemonFromMix() {
-        if ( self.nLemonsPerBatch > 0)
+        if ( self.lemonade.lemonsPerBatch > 0)
         {
-            self.nLemonsPerBatch--
-            self.updateMixStrength()
+            self.lemonade.lemonsPerBatch--
         }
     }
     
     func maxIceReached() -> Bool {
-        return (self.nIcePerBatch >= self.kMaxIcePerBatch)
+        return (self.lemonade.icePerBatch >= self.lemonade.maxIcePerBatch)
     }
     
     func addIceToMix() -> Bool {
         if (!self.maxIceReached())
         {
-            self.nIcePerBatch++
-            self.updateMixStrength()
+            self.lemonade.icePerBatch++
             return true
         }
         else
@@ -301,10 +364,9 @@ class LemonadeStand {
     }
     
     func removeIceFromMix() {
-        if ( self.nIcePerBatch > 0)
+        if ( self.lemonade.icePerBatch > 0)
         {
-            self.nIcePerBatch--
-            self.updateMixStrength()
+            self.lemonade.icePerBatch--
         }
     }
 
@@ -312,11 +374,11 @@ class LemonadeStand {
         if (haveInventoryForOneBatch())
         {
             // Adjust inventory for first batch
-            nLemons -= nLemonsPerBatch
-            nIce -= nIcePerBatch
+            inventory.lemons -= self.lemonade.lemonsPerBatch
+            inventory.ice -= self.lemonade.icePerBatch
             
             // Increase glasses available
-            nGlassesAvailable += kGlassesPerBatch
+            self.lemonade.glassesAvailable += self.lemonade.glassesPerBatch
             
             return true
         }
@@ -327,31 +389,7 @@ class LemonadeStand {
     }
     
     func haveInventoryForOneBatch() -> Bool {
-        return ( (self.nLemonsPerBatch <= self.nLemons) && (self.nIcePerBatch <= self.nIce) )
-    }
-    
-    func updateMixStrength() {
-        let kWaterPerBatch = self.kMaxLemonsPerBatch - self.nLemonsPerBatch
-        if ((self.nIcePerBatch + kWaterPerBatch) > 0)
-        {
-            self.nLemonadeStrength = Double(self.nLemonsPerBatch) / Double(self.nIcePerBatch + kWaterPerBatch)
-        }
-        else
-        {
-            self.nLemonadeStrength = 2.0
-        }
-    }
-    
-    func lemondateIsAcidic() -> Bool {
-        return (self.nLemonadeStrength > 1.33)
-    }
-    
-    func lemondateIsEqual() -> Bool {
-        return (self.nLemonadeStrength <= 1.33 && self.nLemonadeStrength >= 0.67)
-    }
-    
-    func lemondateIsDilluted() -> Bool {
-        return (self.nLemonadeStrength < 0.67)
+        return ( (self.lemonade.lemonsPerBatch <= self.inventory.lemons) && (self.lemonade.icePerBatch <= self.inventory.ice) )
     }
 }
 

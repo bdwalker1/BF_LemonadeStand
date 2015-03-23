@@ -140,7 +140,7 @@ class ViewController: UIViewController {
         }
         else
         {
-            self.showAlertWithText(header: "Insufficient Funds", message: "You do not have enough funds to buy another lemon.  Lemons cost $\(lemonadeStand.kCostOfLemon) each.")
+            self.showAlertWithText(header: "Insufficient Funds", message: "You do not have enough funds to buy another lemon.  Lemons cost $\(lemonadeStand.cart.costOfLemon) each.")
         }
     }
     
@@ -157,7 +157,7 @@ class ViewController: UIViewController {
         }
         else
         {
-            self.showAlertWithText(header: "Insufficient Funds", message: "You do not have enough funds to buy another lemon.  Lemons cost $\(lemonadeStand.kCostOfLemon) each.")
+            self.showAlertWithText(header: "Insufficient Funds", message: "You do not have enough funds to buy another lemon.  Lemons cost $\(lemonadeStand.cart.costOfLemon) each.")
         }
     }
     
@@ -179,7 +179,7 @@ class ViewController: UIViewController {
         }
         else
         {
-            self.showAlertWithText(header: "Max Reached", message: "You can have a maximum of \(lemonadeStand.kMaxLemonsPerBatch) lemons in each batch.")
+            self.showAlertWithText(header: "Max Reached", message: "You can have a maximum of \(lemonadeStand.lemonade.maxLemonsPerBatch) lemons in each batch.")
         }
     }
     
@@ -201,7 +201,7 @@ class ViewController: UIViewController {
         }
         else
         {
-            self.showAlertWithText(header: "Max Reached", message: "You can have a maximum of \(lemonadeStand.kMaxIcePerBatch) ice cubes in each batch.")
+            self.showAlertWithText(header: "Max Reached", message: "You can have a maximum of \(lemonadeStand.lemonade.maxIcePerBatch) ice cubes in each batch.")
         }
     }
     
@@ -212,7 +212,7 @@ class ViewController: UIViewController {
     
     func pressDoBusiness(button: UIButton) {
         
-        if (lemonadeStand.nLemonsPerBatch <= 0)
+        if (lemonadeStand.lemonade.lemonsPerBatch <= 0)
         {
             showAlertWithText(header: "Doh!", message: "You cannot make lemonade without at least one lemon in the mix!")
         }
@@ -266,22 +266,22 @@ class ViewController: UIViewController {
     }
     
     func updateInventoryView() {
-        self.lblFunds.text = "$\(lemonadeStand.nFunds)"
-        self.lblLemons.text = "\(lemonadeStand.nLemons)"
-        self.lblIce.text = "\(lemonadeStand.nIce)"
+        self.lblFunds.text = "$\(lemonadeStand.inventory.funds)"
+        self.lblLemons.text = "\(lemonadeStand.inventory.lemons)"
+        self.lblIce.text = "\(lemonadeStand.inventory.ice)"
     }
     
     func updateStoreView() {
-        self.lblStoreLemons.text = "\(lemonadeStand.nLemonsToBuy)"
-        self.lblStoreIce.text = "\(lemonadeStand.nIceToBuy)"
-        self.lblStoreCost.text = "$\(lemonadeStand.nStoreCost)"
+        self.lblStoreLemons.text = "\(lemonadeStand.cart.lemons)"
+        self.lblStoreIce.text = "\(lemonadeStand.cart.ice)"
+        self.lblStoreCost.text = "$\(lemonadeStand.cart.cost)"
         self.updateInventoryView()
     }
     
     func updateMixView() {
-        self.lblMixLemons.text = "\(lemonadeStand.nLemonsPerBatch)"
-        self.lblMixIce.text = "\(lemonadeStand.nIcePerBatch)"
-        self.progMixStrength.progress = Float(lemonadeStand.nLemonadeStrength) / 2.0
+        self.lblMixLemons.text = "\(lemonadeStand.lemonade.lemonsPerBatch)"
+        self.lblMixIce.text = "\(lemonadeStand.lemonade.icePerBatch)"
+        self.progMixStrength.progress = Float(lemonadeStand.lemonade.strength()) / 2.0
     }
 
     func updateWeatherView() {

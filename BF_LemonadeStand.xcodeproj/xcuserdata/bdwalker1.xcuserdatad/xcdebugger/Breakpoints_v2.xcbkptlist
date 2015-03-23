@@ -9,22 +9,6 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BF_LemonadeStand/LemonadeStand.swift"
-            timestampString = "448759297.683136"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "337"
-            endingLineNumber = "337"
-            landmarkName = "updateMixStrength()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "BF_LemonadeStand/Weather.swift"
             timestampString = "448706648.707222"
             startingColumnNumber = "9223372036854775807"
@@ -72,11 +56,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BF_LemonadeStand/LemonadeStand.swift"
-            timestampString = "448759297.683136"
+            timestampString = "448780071.835757"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "169"
-            endingLineNumber = "169"
+            startingLineNumber = "235"
+            endingLineNumber = "235"
             landmarkName = "doBusiness(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -88,11 +72,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BF_LemonadeStand/LemonadeStand.swift"
-            timestampString = "448758738.716261"
+            timestampString = "448778854.742903"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
             landmarkName = "doBusiness(_:)"
             landmarkType = "5">
          </BreakpointContent>
