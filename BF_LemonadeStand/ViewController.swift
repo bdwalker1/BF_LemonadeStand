@@ -175,10 +175,6 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         {
             lemonadeStand.addLemonToMix()
             self.updateMixView()
-            if (!lemonadeStand.haveInventoryForOneBatch())
-            {
-                self.showAlertWithText(message: "You won't even have enough lemons for one batch of lemonade. You will not be able to serve any customers.")
-            }
         }
         else
         {
@@ -197,10 +193,6 @@ class ViewController: UIViewController, ADBannerViewDelegate {
         {
             lemonadeStand.addIceToMix()
             self.updateMixView()
-            if (!lemonadeStand.haveInventoryForOneBatch())
-            {
-                self.showAlertWithText(message: "You won't even have enough ice for one batch of lemonade. You will not be able to serve any customers.")
-            }
         }
         else
         {
